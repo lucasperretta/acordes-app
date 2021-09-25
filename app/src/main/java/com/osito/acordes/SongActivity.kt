@@ -1,9 +1,7 @@
 package com.osito.acordes
 
 import android.os.Bundle
-import android.text.Html
 import android.text.Spanned
-import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -48,8 +46,9 @@ class SongActivity : AppCompatActivity() {
 
         // Text.....
         val text = readFromFile(intent.getStringExtra("file")!!)
+
         binding.root.post {
-            binding.textView.text = processText(text, countCharacters())
+            binding.textView.text = processText(removeUTF8BOM(text), countCharacters())
         }
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
@@ -66,6 +65,8 @@ class SongActivity : AppCompatActivity() {
         }, 0, (1000/60).toLong())
 
     }
+
+    private fun removeUTF8BOM(string: String) = if (string.startsWith("\uFEFF")) { string.substring(1) } else string
 
     private fun processText(text: String, maxCharactersInLine: Int): Spanned {
         val color = getColorHex(R.color.color)
